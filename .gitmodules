@@ -1,4 +1,0 @@
-[submodule "sleepy-discord"]
-    path = sleepy-discord
-	url = https://github.com/yourWaifu/sleepy-discord.git
-    branch = develop

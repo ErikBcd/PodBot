@@ -1,0 +1,176 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "Pod"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 7,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 10,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g  "
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "-Wall"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "-pthread"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 2,
+					"define" : "CURL_STATICLIB"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 2,
+					"path" : "/home/erik/Dokumente/Programmieren/C++/discordBot/podBot/sleepy-discord/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/erik/Dokumente/Programmieren/C++/discordBot/podBot/sleepy-discord/deps/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/erik/Dokumente/Programmieren/C++/discordBot/podBot/sleepy-discord/deps/cpr/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/erik/Dokumente/Programmieren/C++/discordBot/podBot/sleepy-discord/deps/asio/asio/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/erik/Dokumente/Programmieren/C++/discordBot/podBot/sleepy-discord/deps/websocketpp"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/erik/Dokumente/Programmieren/C++/discordBot/podBot/sleepy-discord/include/sleepy_discord/IncludeNonexistent"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "cpr::@8fbe41c5ba7713906b67"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "sleepy-discord::@eecdcefabbe30dc8e414"
+		}
+	],
+	"id" : "Pod::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-rdynamic",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "sleepy-discord/sleepy_discord/libsleepy-discord.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "lib/libcpr.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lcurl",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lssl",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lcrypto",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-pthread",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "Pod",
+	"nameOnDisk" : "Pod",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "main.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

@@ -5,6 +5,6 @@
 
 int main(int, char**) {
     std::cout << "Hello, world!\n";
-    Pod01 pod("HIER TOKEN EINFUEGEN DANGE", 2);
+    Pod pod("", 2);
     pod.run();
 }

@@ -3,6 +3,7 @@
 #include <regex>
 #include "sleepy_discord/sleepy_discord.h"
 #include "sleepy_discord/websocketpp_websocket.h"
+#include "brainfuck.cpp"
 using namespace std;
 
 class Pod : public SleepyDiscord::DiscordClient {
@@ -22,6 +23,15 @@ public:
 			cout << "MSG = " +msg << endl;
 			if (message.startsWith(indicator + " OwOfy!")) {
 				sendMessage(message.channelID, owofyRegEx(msg));
+			}
+			else if (message.startsWith(indicator + " bf")) {
+				string bf = Brainfuck::interpret(message.content);
+				cout << bf << endl;
+				SleepyDiscord::Message sentMsg = sendMessage(message.channelID, bf);
+				if (sentMsg.content.empty()) {
+					sendMessage(message.channelID, "It seems like the interpreted brainfuck code cannot be printed by Discord. Me is very sorry.");
+				}
+				cout << sentMsg.content << endl;
 			}
 			else if (message.startsWith(indicator + " Help") || message.startsWith(indicator + " help")) {
 				sendMessage(message.channelID, helpCommands());
@@ -43,7 +53,7 @@ public:
 	}
 
 	string helpCommands() {
-		return	("I know these commands: \n`Pod? OwOfy! *Super cool text here*` OwOfies the given text\n`Pod? Ping!` Pong!\n`Pod? Help` Prints this text \nGot any ideas for new commands? Message Estugon! Baii");
+		return	("I know these commands: \n`Pod? OwOfy! *Super cool text here*` OwOfies the given text\n`Pod? Ping!` Pong!\n`Pod? Help` Prints this text \n`Pod? bf *brainfuck code here*` Interprets the given brainfuck code! (Cannot use `,` yet!)\nGot any ideas for new commands? Message Estugon! Baii");
 	}
 
 	string owofy(string msg) {

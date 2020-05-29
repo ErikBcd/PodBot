@@ -4,7 +4,7 @@
 #include <regex>
 #include <vector>
 
-
+// TODO: Better comments, clean up this mess (aka merge these massive switches into a single thing)
 using namespace std;
 
 
@@ -14,9 +14,13 @@ class Brainfuck
     public:
         static vector<int> cells;
         static int ptr;
+	
+	/* Interprets a given Brainfuck sequence and returns a string containing all the prints */
         static string interpret(string input) {
+	    // We only need the brainfuck related commands from the input string
             regex br("[^<>+\-.\,\\[\\]]");
             input = regex_replace(input, br, "");
+	    // Initialize the cells
             for (int i = 0; i < input.length(); i++) {
                 cells.push_back(0);
             }
@@ -24,36 +28,49 @@ class Brainfuck
             Brainfuck::ptr = 0;
 
             string out = "";
-
+	    /* 
+	     * The main interpreter loop:
+	     * Go through each bf operation and perform it 
+	     * on the cells and the output string.
+	     */
             for (int i = 0; input[i] != '\0'; i++) {
 
                 switch(input[i]) {
-                case '+':
-				    Brainfuck::cells[Brainfuck::ptr]++;
-				    break;
-			    case '-':
-				    Brainfuck::cells[Brainfuck::ptr]--;
+                	case '+':
+				// Increment the value of the current cell
+				Brainfuck::cells[Brainfuck::ptr]++;
+				break;
+			case '-':
+				// Decrement the value of the current cell
+				Brainfuck::cells[Brainfuck::ptr]--;
     				break;
 		    	case '<':
+				// Move to the cell left of the current cell
 			    	Brainfuck::ptr--;
     				break;
 	    		case '>':
+				// Move to the cell right of the current cell
 		    		Brainfuck::ptr++;
 			    	break;
     			case '.':
+				// Add the value of the current cell 
+				// as a character to the output string
 	    			out += (char) Brainfuck::cells[Brainfuck::ptr];
 		    		break;
     			case ',':
+				// Wait for user input
+				// TODO: Implement this..... somehow.
 	    			return "Currently not supported! Working on it!";
-                case '[':
-                    {
-                        int eoL = getEndOfLoop(input, i);
-                        if (eoL == -1) {
-                            return string("Error! Loop at Position `%d` is never closed!", i);
-                        }
-                        out += Brainfuck::loop(input, eoL, i);
-                        i = eoL;
-                        break;
+                	case '[':
+				// The start of a loop.
+                    		{
+                        		int eoL = getEndOfLoop(input, i);
+                        		if (eoL == -1) {
+                            		return string("Error! Loop at Position `%d` is never closed!", i);
+                       	 	}
+                        	out += Brainfuck::loop(input, eoL, i);
+                        	i = eoL;
+                        	break;
                     }
                 }
             }
@@ -63,6 +80,12 @@ class Brainfuck
         }
     private:
         
+	/* 
+	 * Implementation of the brainfuck loops 
+	 * Will loop throgh the given code inside the boundaries defined by
+	 * loopStop and loopStart until the value of the current cell is 0 
+	 * and the end of the loop is reached.
+	 */
         static string loop(string index, const int loopStop, const int loopStart) {
             string out = "";
             int i = loopStart +1;
@@ -113,6 +136,10 @@ class Brainfuck
             }
             return out;
         }
+	
+	/* 
+	 * Searches for the end of the current loop and returns the index of it.
+	 */
         static int getEndOfLoop(string code, int index) {
             int i = index + 1;
             int depth = 0;

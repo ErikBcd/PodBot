@@ -6,14 +6,14 @@
 
 
 Command::Command() {}
-SleepyDiscord::SendMessageParams execute(std::string param) 
+SleepyDiscord::SendMessageParams Command::execute(std::string param) 
 {
     SleepyDiscord::SendMessageParams params;
     params.content = "The specified command was not found!";
     return params;
 }
 
-std::string description() 
+std::string Command::description() 
 {
     return "This is a generic command description. Not that useful, eh?\nTell Estugon he missed a command description if you see him, okay?";
 }

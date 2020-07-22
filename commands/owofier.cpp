@@ -11,7 +11,7 @@ OwOfier::OwOfier() {}
 
 
 
-std::string owofy(std::string input) {
+std::string OwOfier::owofy(std::string input) {
     using namespace std;
 
     regex w("(?:r|l)");
@@ -43,13 +43,13 @@ std::string owofy(std::string input) {
     return output;
 }
 
-SleepyDiscord::SendMessageParams execute(std::string param) 
+SleepyDiscord::SendMessageParams OwOfier::execute(std::string param) 
 {
     SleepyDiscord::SendMessageParams params;
     params.content = owofy(param);
     return params;
 }
 
-std::string description() {
+std::string OwOfier::description() {
     return "Usage: 'Pod? owo *your text here*'\nConvert your text in a more glorious form!";
 }

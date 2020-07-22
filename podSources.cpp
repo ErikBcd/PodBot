@@ -3,122 +3,56 @@
 #include <regex>
 #include "sleepy_discord/sleepy_discord.h"
 #include "sleepy_discord/websocketpp_websocket.h"
-#include "brainfuck.cpp"
+
+#include "commands/include/command.h"
+
+
 using namespace std;
 
 class Pod : public SleepyDiscord::DiscordClient {
-	string indicator = "Pod?";
+	string indicator = "Pod? ";
 public:
 	using SleepyDiscord::DiscordClient::DiscordClient;
 
 	void onReady(SleepyDiscord::Ready message) override {
-		updateStatus(indicator + " Help");
+		commands.insert(std::make_pair("owo", new OwOfier()));
+    	commands.insert(std::make_pair("mal", new MyAnimeListCommands()));
+    	commands.insert(std::make_pair("generic", new Command()));
+		//updateStatus(indicator + " Help");
+		updateStatus("Under Construction!");
 		cout << "RUNNING " << endl;
 	}
 
 	void onMessage(SleepyDiscord::Message message) {
-		//cout << "Got Message" << endl;
+		
 		if (message.startsWith(indicator)) {
-			string msg = message.content.substr( indicator.size(), message.content.size() - indicator.size());
-			cout << "MSG = " +msg << endl;
-			if (message.startsWith(indicator + " OwOfy!")) {
-				sendMessage(message.channelID, owofyRegEx(msg));
-			}
-			else if (message.startsWith(indicator + " bf")) {
-				string bf = Brainfuck::interpret(message.content);
-				cout << bf << endl;
-				SleepyDiscord::Message sentMsg = sendMessage(message.channelID, bf);
-				if (sentMsg.content.empty()) {
-					sendMessage(message.channelID, "It seems like the interpreted brainfuck code cannot be printed by Discord. Me is very sorry.");
-				}
-				cout << sentMsg.content << endl;
-			}
-			else if (message.startsWith(indicator + " Help") || message.startsWith(indicator + " help")) {
-				sendMessage(message.channelID, helpCommands());
-			}
-			else if (message.startsWith(indicator + " Ping!")) {
-				sendMessage(message.channelID, "Pong!");
-			}
-			else if (message.startsWith(indicator + " Good Bot") || message.startsWith(indicator + "Good bot")) {
-				sendMessage(message.channelID, "Thank you kindly, " + message.author.username);
-			}
-			else if (message.startsWith(indicator + " Update Status") && message.author.username == "Estugon") {
-				updateStatus(msg.substr(string(" Update Status ").size(), msg.size() - string(" Update Status ").size()));
-			}
-			else if (message.startsWith(indicator + " Goodbye") && message.author.username == "Estugon") {
-				sendMessage(message.channelID, "Okay, bye! o/");
-				this->quit();
-			}
+			string msg = message.content;
+			msg = msg.substr(indicator.size(), msg.size() - indicator.size());
+			SleepyDiscord::SendMessageParams params = executeCommand(msg);
+			params.channelID = message.channelID;
+
+			sendMessage(params);
 		}
 	}
+private:
+	map<string, Command*> commands;
+	SleepyDiscord::SendMessageParams executeCommand(string commandRaw) {
+		string command;
+		string param;
 
-	string helpCommands() {
-		return	("I know these commands: \n`Pod? OwOfy! *Super cool text here*` OwOfies the given text\n`Pod? Ping!` Pong!\n`Pod? Help` Prints this text \n`Pod? bf *brainfuck code here*` Interprets the given brainfuck code! (Cannot use `,` yet!)\nGot any ideas for new commands? Message Estugon! Baii");
-	}
-
-	string owofy(string msg) {
-		msg = msg.substr(string(" OwOfy!").size(), msg.size() - string(" OwOfy!").size());
-		string owoMsg = "";
-		bool isEmpty = true;
-		for (char c : msg) {
-			if (c == 'r' || c == 'l') {
-				owoMsg += 'w';
-			}
-			else if (c == 'R' || c == 'L') {
-				owoMsg += 'W';
-			}
-			else {
-				owoMsg += c;
-			}
-			if (c != ' ') {
-				isEmpty = false;
-			}
+		size_t space_pos = commandRaw.find(" ");
+		if (space_pos != string::npos) {
+			command = commandRaw.substr(0, space_pos);
+			param = commandRaw.substr(command.size() + 1, 
+					commandRaw.size() - command.size());
+		} else {
+			command = commandRaw;
 		}
 
-		if (!isEmpty) {
-			if ((&owoMsg.at(owoMsg.length() - 1))[0] == '?') {
-				owoMsg += " UwU";
-			}
-			else {
-				owoMsg += " OwO";
-			}
-			return owoMsg;
+		if (commands.find(command) != commands.end()) {
+			return commands[command]->execute(param);
+		} else {
+			return commands["generic"]->execute(param);
 		}
-		else {
-			return "No usable Text found UwU \\nUsage: " + indicator + " OwOfy! *Very cool Text*";
-		}
-	}
-
-	string owofyRegEx(string input) {
-		
-		input = input.substr(string(" OwOfy!").size(), input.size() - string(" OwOfy!").size());
-
-		regex w("(?:r|l)");
-		string output = input;
-		
-		output = regex_replace (input, w, "w");
-
-
-		regex upperCaseW("(?:R|L)");
-		output = regex_replace (output, upperCaseW, "W");
-
-
-		regex ny("n([aeiou])");
-		regex upperCaseNy("N([aeiou])");
-		regex upperCaseNY("N([AEIOU])");
-		regex ove("(ove)");
-		regex exclamation("\!");
-		regex question("\\?");
-		regex point("\\.");
-
-		output = regex_replace (output, ny, "ny$1");
-		output = regex_replace (output, upperCaseNy, "Ny$1");
-		output = regex_replace (output, upperCaseNY, "NY$1");
-		output = regex_replace(output, ove, "uv");
-		output = regex_replace(output, exclamation, "$& >w<");
-		output = regex_replace(output, question, "$& UwU");
-		output = regex_replace(output, point, "$& OwO");
-
-		return output;
-	}
+	} 
 };

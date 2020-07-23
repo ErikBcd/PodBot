@@ -17,7 +17,7 @@
 
 MyAnimeListCommands::MyAnimeListCommands() {}
 
-SleepyDiscord::Embed createEmbed(Anime input) {
+SleepyDiscord::Embed MyAnimeListCommands::createEmbed(Anime input) {
     SleepyDiscord::Embed embed;
 
     embed.title = std::move(input.title);
@@ -67,7 +67,7 @@ SleepyDiscord::Embed createEmbed(Anime input) {
     return embed;
 }
 
-SleepyDiscord::SendMessageParams execute(std::string param) {
+SleepyDiscord::SendMessageParams MyAnimeListCommands::execute(std::string param) {
     SleepyDiscord::SendMessageParams params;
     params.embed = createEmbed(MyAnimeListAPI::getAnime(param));
     return params;
@@ -75,7 +75,7 @@ SleepyDiscord::SendMessageParams execute(std::string param) {
 
 
 
-std::string description()
+std::string MyAnimeListCommands::description()
 {
     return "Put a description here, yo.";
 }

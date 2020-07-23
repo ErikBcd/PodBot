@@ -14,7 +14,7 @@ struct Manga;
 
 using json = nlohmann::json;
 
-std::string getResults(std::string in) {
+std::string MyAnimeListAPI::getResults(std::string in) {
     std::string out;
     std::string regex = "\\\"results\\\":\\\[(.*?)]";
     std::regex rgx(regex.c_str());
@@ -26,7 +26,7 @@ std::string getResults(std::string in) {
     return out;
 }
 
-Anime getAnime(std::string name) {
+Anime MyAnimeListAPI::getAnime(std::string name) {
     struct Anime output;
 
     size_t pos;
@@ -85,7 +85,7 @@ std::string MyAnimeListAPI::getRequest(std::string request) {
     return readBuffer;
 }
 
-size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+size_t MyAnimeListAPI::WriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
     ((std::string*)userp)->append((char*) contents, size * nmemb);
     return size * nmemb;
 }

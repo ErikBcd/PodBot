@@ -34,7 +34,9 @@ Anime MyAnimeListAPI::getAnime(std::string name) {
         name.replace(pos, 1, "%20");
     }
     std::string request = "https://api.jikan.moe/v3/search/anime?q="+name+"&limit=1";
-    std::string res = getResults(request);
+    std::string res = getRequest(request);
+
+    
 
     res = getResults(res);
     auto jResults = json::parse(res);
@@ -45,8 +47,8 @@ Anime MyAnimeListAPI::getAnime(std::string name) {
     output.start_date = *jResults.find("start_date");    
     output.end_date = *jResults.find("end_date");       
     output.rated = *jResults.find("rated");
-    output.score = *jResults.find("score");
-    output.episodes = *jResults.find("episodes");
+    output.score = std::to_string((long long) *jResults.find("score"));
+    output.episodes = std::to_string((long long) *jResults.find("episodes"));
     
     return output;
 }

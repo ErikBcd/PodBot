@@ -28,17 +28,17 @@ std::string OwOfier::owofy(std::string input) {
     regex upperCaseNy("N([aeiou])");
     regex upperCaseNY("N([AEIOU])");
     regex ove("(ove)");
-    regex exclamation("\!");
-    regex question("\\?");
-    regex point("\\.");
+    regex exclamation("![^!]");
+    regex question("\\?[^\\?]");
+    regex point("\\.[^\\.]");
 
     output = regex_replace (output, ny, "ny$1");
     output = regex_replace (output, upperCaseNy, "Ny$1");
     output = regex_replace (output, upperCaseNY, "NY$1");
     output = regex_replace(output, ove, "uv");
-    output = regex_replace(output, exclamation, "$& >w<");
-    output = regex_replace(output, question, "$& UwU");
-    output = regex_replace(output, point, "$& OwO");
+    output = regex_replace(output, exclamation, "$&>w< ");
+    output = regex_replace(output, question, "$&UwU ");
+    output = regex_replace(output, point, "$&OwO ");
 
     return output;
 }

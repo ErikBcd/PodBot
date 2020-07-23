@@ -17,9 +17,9 @@ struct Anime {
     std::string imageURL;
     std::string malURL;
 
-    int mal_id;
-    int episodes;
-    float score;
+    std::string mal_id;
+    std::string episodes;
+    std::string score;
 };
 
 struct Manga {

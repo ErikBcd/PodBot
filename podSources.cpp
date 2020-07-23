@@ -31,7 +31,7 @@ public:
 			SleepyDiscord::SendMessageParams params = executeCommand(msg);
 			params.channelID = message.channelID;
 
-			sendMessage(params);
+			cout << "Sending Message" << sendMessage(params).text;
 		}
 	}
 private:

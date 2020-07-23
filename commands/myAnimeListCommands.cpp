@@ -57,19 +57,20 @@ SleepyDiscord::Embed MyAnimeListCommands::createEmbed(Anime input) {
     
     embed.fields.push_back(start_date);
     embed.fields.push_back(end_date);
-    embed.fields.push_back(status);
+    //embed.fields.push_back(status);
     embed.fields.push_back(score);
     embed.fields.push_back(rated);
     embed.fields.push_back(type);
     embed.fields.push_back(episodes);
-    embed.fields.push_back(mal_id);
+    //embed.fields.push_back(mal_id);
 
     return embed;
 }
 
 SleepyDiscord::SendMessageParams MyAnimeListCommands::execute(std::string param) {
     SleepyDiscord::SendMessageParams params;
-    params.embed = createEmbed(MyAnimeListAPI::getAnime(param));
+    Anime result = MyAnimeListAPI::getAnime(param);
+    params.embed = createEmbed(result);
     return params;
 }
 

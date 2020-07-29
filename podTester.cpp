@@ -2,52 +2,91 @@
 #include <string.h>
 #include <iostream>
 #include <map>
+#include <vector>
 
-#include "commands/command.h"
-#include "commands/myAnimeList.h"
-#include "commands/owofier.h"
+#include "commands/include/myAnimeList.h"
+#include "commands/include/lastfmAPI.h"
 
 using namespace std;
 
 int main() {
-    bool running = true;
-    string indicator = "Pod? ";
 
-    map<string, Command*> commands;
-
-    commands.insert(std::make_pair("owo", new OwOfier()));
-    commands.insert(std::make_pair("mal", new MyAnimeList()));
-    commands.insert(std::make_pair("generic", new Command()));
-
-    while (running) {
-        string input;
-        cout << "Please enter a command uwu\n";
-        getline(cin, input);
-
-        cout << "Command = " << input << endl;
-
-        if (input.rfind(indicator, 0) == 0) {
-            string msg = input.substr(indicator.size(), input.size() - indicator.size());
-			string command;
-            string param = "";
-            cout << "ehhhhhhhh " << msg << endl;
-            size_t space_pos = msg.find(" ");
-            if (space_pos != string::npos) {
-                command = msg.substr(0, space_pos);
-                param = msg.substr(command.size() + 1, msg.size() - command.size());
-            } else {
-                command = msg;
-            }
-            cout << "Command: " << command << endl;
-
-            cout << "Your command was: " << command << "\nAnd the params were: " << param << endl;
-
-            if (commands.find(command) != commands.end()) {
-                cout << "Out: " << commands[command]->execute(param) << endl;
-            } else {
-                cout << "Out: " << commands["generic"]->execute(param) << endl;
-            }
-
+    try
+    {
+        lastfm::Album album = lastfm::Album("Believe", "Cher");
+        cout << "Album = " << album.title << "\nArtist = " << album.artist << "\nRelease Date = " << album.releaseDate << "\nPlaycount = " << album.playcount << '\n';
+        for (lastfm::Album::track track : album.tracks) {
+            cout << "-----------------------------------------------\nTrack Title: " << track.title << "\nDuration: " << track.duration << "\nTrack Number: " << track.trackNumber << endl;
         }
+        cout << "-----------------------------------------------\n";
+        for (string tag : album.topTags) {
+            cout << "Tag: " << tag << '\n';
+        }
+        cout << "Image: " << album.image << '\n';
     }
+    catch(const std::exception& e) {
+        std::cerr << e.what() << '\n';
+    }
+
+    try
+    {
+        lastfm::Song s = lastfm::Song("Sky and Sand", "Paul Kalkbrenner");
+        cout << "Name = " << s.title
+             << "\nAlbum = " << s.album
+             << "\nArtist = " << s.artist
+             << "\nTrack Number = " << s.trackNumber
+             << "\nDuration = " << s.duration
+             << "\nURL = " << s.lastFM_url
+             << "\nImage = " << s.image 
+             << "\nPlaycount = " << s.playcount
+             << "\nListeners = " << s.listeners << endl;
+        for (string tag : s.topTags) {
+            cout << "Tag: " << tag << '\n';
+        }
+
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
+
+    try
+    {
+        lastfm::Artist a = lastfm::Artist("Cher");
+        cout << "Name = " << a.title
+             << "\nURL = " << a.lastFM_url
+             << "\nImage = " << a.image 
+             << "\nPlaycount = " << a.playcount
+             << "\nListeners = " << a.listeners << endl;
+        for (string tag : a.topTags) {
+            cout << "Tag: " << tag << '\n';
+        }
+        
+
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+
+    try
+    {
+        lastfm::User a = lastfm::User("Es_tu_the_gon");
+        cout << "Name = " << a.name
+             << "\nReal Name = " << a.realname
+             << "\nURL = " << a.url
+             << "\nImage = " << a.image 
+             << "\nPlaycount = " << a.playcount
+             << "\nAge = " << a.age 
+             << "\nCountry = " << a.country
+             << "\nID = " << a.id << endl;
+        
+
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
 }

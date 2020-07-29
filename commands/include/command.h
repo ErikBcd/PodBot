@@ -5,6 +5,7 @@
 #include <iostream>
 #include "sleepy_discord/sleepy_discord.h"
 #include "myAnimeList.h"
+#include "lastfmAPI.h"
 
 class Command {
     public:
@@ -28,6 +29,20 @@ class MyAnimeListCommands : public Command {
         SleepyDiscord::SendMessageParams execute(std::string);
         SleepyDiscord::Embed createEmbed(Anime);
         std::string description();
+};
+
+class LastFMCommand : public Command {
+    public:
+        LastFMCommand();
+        SleepyDiscord::SendMessageParams execute(std::string);
+        std::string description();
+    private:
+        SleepyDiscord::Embed createEmbed(lastfm::Song);
+        SleepyDiscord::Embed createEmbed(lastfm::Artist);
+        SleepyDiscord::Embed createEmbed(lastfm::Album);
+        SleepyDiscord::Embed createEmbed(lastfm::User);
+        std::vector<std::string> parseParams(std::string);
+
 };
 
 #endif // !COMMANDS_H

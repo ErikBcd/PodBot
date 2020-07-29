@@ -10,14 +10,15 @@
 using namespace std;
 
 class Pod : public SleepyDiscord::DiscordClient {
-	string indicator = "Pod? ";
 public:
 	using SleepyDiscord::DiscordClient::DiscordClient;
 
 	void onReady(SleepyDiscord::Ready message) override {
+		lastfm::setAPIkey();
 		commands.insert(std::make_pair("owo", new OwOfier()));
     	commands.insert(std::make_pair("mal", new MyAnimeListCommands()));
     	commands.insert(std::make_pair("generic", new Command()));
+		commands.insert(std::make_pair("lastfm", new LastFMCommand()));
 		//updateStatus(indicator + " Help");
 		updateStatus("Under Construction!");
 		cout << "RUNNING " << endl;
@@ -28,13 +29,22 @@ public:
 		if (message.startsWith(indicator)) {
 			string msg = message.content;
 			msg = msg.substr(indicator.size(), msg.size() - indicator.size());
+			// Some preprocessing
+			int i = 0;
+			for (char c : msg) {
+				c = std::tolower(c);
+				msg.at(i) = c;
+				i++;
+			}
+
 			SleepyDiscord::SendMessageParams params = executeCommand(msg);
 			params.channelID = message.channelID;
 
-			cout << "Sending Message" << sendMessage(params).text;
+			sendMessage(params);
 		}
 	}
 private:
+	const string indicator = "Pod? ";
 	map<string, Command*> commands;
 	SleepyDiscord::SendMessageParams executeCommand(string commandRaw) {
 		string command;

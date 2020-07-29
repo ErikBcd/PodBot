@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
+#include <vector>
 
 struct Anime {
     std::string title;
@@ -38,7 +39,7 @@ struct Manga {
 
 class MyAnimeListAPI {
     public:
-        static Anime getAnime(std::string);
+        static std::vector<Anime> searchAnime(std::string, int = 1);
     private:
         static std::string getResults(std::string);
         static std::string getField(std::string);

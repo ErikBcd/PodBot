@@ -8,6 +8,8 @@ To get this to work, you need to get the Sleepy-Discord Library, too. It's in th
 Edit: Not it's not automatic. 
 
 
+To set the needed API keys (Discord and Last.fm) you need to provide them in the enviroment variables DISCORD_KEY and LASTFM_KEY.
+glhf
 
 
 TODO: Write a better ReadMe. 

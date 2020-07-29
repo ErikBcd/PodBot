@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <regex>
+#include <vector>
 
 struct Anime;
 
@@ -26,8 +27,8 @@ std::string MyAnimeListAPI::getResults(std::string in) {
     return out;
 }
 
-Anime MyAnimeListAPI::getAnime(std::string name) {
-    struct Anime output;
+std::vector<Anime> MyAnimeListAPI::searchAnime(std::string name, int limit) {
+    std::vector<Anime> output;
 
     size_t pos;
     while ((pos = name.find(' ')) != std::string::npos) {
@@ -35,20 +36,40 @@ Anime MyAnimeListAPI::getAnime(std::string name) {
     }
     std::string request = "https://api.jikan.moe/v3/search/anime?q="+name+"&limit=1";
     std::string res = getRequest(request);
-
+    std::cout << "Answer: \n" << res << '\n';
     
 
-    res = getResults(res);
-    auto jResults = json::parse(res);
+    //res = getResults(res);
+    auto jOut = json::parse(res);
+    int results = 0;
+    if (jOut.find("status") != jOut.end()) {
+        auto status = jOut.find("status");
+        std::cout << "MyAnimeList returned " << *status << " (" << *jOut.find("type") << ") for this.\n"; 
+        int x = *status;
+        throw (x);
+    }
+    std::cout << "b1\n";
+    for (const auto& item : jOut) {
+        std::cout << "b2\n";
+        std::cout << item.dump() << '\n';
+        /*Anime next;
+        next.title = *item.find("title");
+        next.synopsis = *item.find("synopsis");
+        next.type = *item.find("type");
+        next.start_date = *item.find("start_date");    
+        next.end_date = *item.find("end_date");       
+        next.rated = *item.find("rated");
+        next.score = std::to_string((long long) *item.find("score"));
+        next.episodes = std::to_string((long long) *item.find("episodes"));
+        */
+        results++;
 
-    output.title = *jResults.find("title");
-    output.synopsis = *jResults.find("synopsis");
-    output.type = *jResults.find("type");
-    output.start_date = *jResults.find("start_date");    
-    output.end_date = *jResults.find("end_date");       
-    output.rated = *jResults.find("rated");
-    output.score = std::to_string((long long) *jResults.find("score"));
-    output.episodes = std::to_string((long long) *jResults.find("episodes"));
+        if (limit == results) {
+            break;
+        }
+    }
+
+    
     
     return output;
 }

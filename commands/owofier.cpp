@@ -51,5 +51,9 @@ SleepyDiscord::SendMessageParams OwOfier::execute(std::string param)
 }
 
 std::string OwOfier::description() {
-    return "Usage: 'Pod? owo *your text here*'\nConvert your text in a more glorious form!";
+    return "Transforms given text into a much greater version of it.";
+}
+
+std::string OwOfier::longDescription() {
+    return ("The OwOfier(TM) will transform any text you send to it into a way greater version of it!\nUsage:\n`Pod? owo <cool text here.>`");
 }

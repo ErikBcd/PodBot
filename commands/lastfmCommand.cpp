@@ -334,3 +334,15 @@ std::vector<std::string> LastFMCommand::parseParams(std::string rawParams) {
 
     return params;
 }
+
+std::string LastFMCommand::longDescription() {
+    std::cout << "TEST FICKE 1\n";
+    std::string help = "Search the last.fm database for music or users!\n";
+    help            += "Usage: `Pod? lastfm ` + \n";
+    help            += "`artist <artist name here>` - This will give you some information about the artist.\n";
+    help            += "`album <album name here> <artist name here (optional, but recommended)>` - This gives some information about the specified album.\n";
+    help            += "`song <song name here> <artist name here (optional, but recommended)>` - Some information about the song.\n";
+    help            += "`user <username here>` - Some information about the user.\n";
+    help            += "\nThis command is still very early in development. So the functionality is *very* basic uwu";
+    return help;
+}

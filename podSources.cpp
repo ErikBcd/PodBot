@@ -19,6 +19,7 @@ public:
     	commands.insert(std::make_pair("mal", new MyAnimeListCommands()));
     	commands.insert(std::make_pair("generic", new Command()));
 		commands.insert(std::make_pair("lastfm", new LastFMCommand()));
+		commands.insert(std::make_pair("help", new Help(commands)));
 		//updateStatus(indicator + " Help");
 		updateStatus("Under Construction!");
 		cout << "RUNNING " << endl;

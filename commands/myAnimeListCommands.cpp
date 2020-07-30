@@ -69,8 +69,9 @@ SleepyDiscord::Embed MyAnimeListCommands::createEmbed(Anime input) {
 
 SleepyDiscord::SendMessageParams MyAnimeListCommands::execute(std::string param) {
     SleepyDiscord::SendMessageParams params;
-    Anime result = MyAnimeListAPI::searchAnime(param).front();
-    params.embed = createEmbed(result);
+    //Anime result = MyAnimeListAPI::searchAnime(param).front();
+    //params.embed = createEmbed(result);
+    params.content = std::move("Sorry, this command is currently in development! >w<");
     return params;
 }
 
@@ -78,5 +79,9 @@ SleepyDiscord::SendMessageParams MyAnimeListCommands::execute(std::string param)
 
 std::string MyAnimeListCommands::description()
 {
-    return "Put a description here, yo.";
+    return "Currently not working.";
+}
+
+std::string MyAnimeListCommands::longDescription() {
+    return "This command is currently in the works! (Like everything else, regarding the bot.. <:notlikethis:347786689479049217>)";
 }

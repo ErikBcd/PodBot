@@ -39,7 +39,7 @@ SleepyDiscord::SendMessageParams LastFMCommand::execute(std::string args) {
     std::vector<std::string> lastFMparams;
     try
     {
-        lastFMparams = parseParams(param);
+        lastFMparams = parameterize(param);
     }
     catch(const std::exception& e)
     {
@@ -48,80 +48,37 @@ SleepyDiscord::SendMessageParams LastFMCommand::execute(std::string args) {
         return params;
     }
     
-    for (std::string p : lastFMparams) {
-        std::cout << "Param: " << p << '\n';
-    }
     if (!lastFMparams.empty()) {
         search = lastFMparams.front();
         lastFMparams.erase(lastFMparams.begin());
     }
 
-    std::cout << "Comm: " << command << "Search: " << search << std::endl;
-
     if (commands.find(command) != commands.end()) {
-        switch (commands[command]) {
-            case 0:
-                try
-                {
+        try
+        {
+            switch (commands[command]) {
+                case 0:
                     embed = createEmbed(lastfm::User(search));
-                }
-                catch(const std::exception& e)
-                {
-                    SleepyDiscord::SendMessageParams params;
-                    params.content = std::move("Error: "+((std::string) e.what()));
-                    return params;
-                }
-                
-                
-                break;
-            case 1:
-            try
-            {
-                embed = createEmbed(lastfm::Artist(search));
-            }
-            catch(const std::exception& e)
-            {
-                SleepyDiscord::SendMessageParams params;
-                params.content = std::move("Error: "+((std::string) e.what()));
-                return params;
-            }
-            
-                
-                break;
-            case 2:
-                {
-                    try
-                    {
-                        embed = createEmbed(lastfm::Album(search, lastFMparams.front()));
-                    }
-                    catch(const std::exception& e)
-                    {
-                        SleepyDiscord::SendMessageParams params;
-                        params.content = std::move("Error: "+((std::string) e.what()));
-                        return params;
-                    }
-                    
-                    
                     break;
-                }
-            case 3:
-                {
-                    try
-                    {
-                        lastfm::Song s = lastfm::Song(search, lastFMparams.front());
-                        embed = createEmbed(s);
-                    }
-                    catch(const std::exception& e)
-                    {
-                        SleepyDiscord::SendMessageParams params;
-                        params.content = std::move("Error: "+((std::string) e.what()));
-                        return params;
-                    }
-                    
-                    
+                case 1:
+                    embed = createEmbed(lastfm::Artist(search));          
                     break;
-                }
+                case 2:
+                    embed = createEmbed(lastfm::Album(search, lastFMparams.front()));
+                    break;
+                case 3:
+                    embed = createEmbed(lastfm::Song(search, lastFMparams.front()));
+                    break;
         }
+        }
+        catch(const std::exception& e)
+        {
+            SleepyDiscord::SendMessageParams params;
+            params.content = std::move("Error: "+((std::string) e.what()));
+            return params;
+        }
+        
+        
     }
 
     SleepyDiscord::SendMessageParams params;
@@ -131,7 +88,7 @@ SleepyDiscord::SendMessageParams LastFMCommand::execute(std::string args) {
 }
 
 std::string LastFMCommand::description() {
-    return "Bin noch am testen.";
+    return "Get some info from the last.fm database!";
 };
 
 SleepyDiscord::Embed LastFMCommand::createEmbed(lastfm::Song song) {
@@ -146,13 +103,15 @@ SleepyDiscord::Embed LastFMCommand::createEmbed(lastfm::Song song) {
     if (!song.lastFM_url.empty()) {
         output.url = std::move(song.lastFM_url);
     }
-    output.description = std::move("Hallo ich bin eine Description!");
     
     if (!song.album.empty()) {
         SleepyDiscord::EmbedField album;
         album.name = std::move(song.album);
+        int duration = std::stoi(song.duration);
+        int minutes = duration / 60;
+        int seconds = duration % 60;
         album.value = std::move("Track Number: "+song.trackNumber
-                                +"\nDuration: "+song.duration+"s");
+                                +"\nDuration: "+std::to_string(minutes)+":"+std::to_string(seconds));
         output.fields.push_back(album);
     }
 
@@ -168,9 +127,7 @@ SleepyDiscord::Embed LastFMCommand::createEmbed(lastfm::Song song) {
     for (std::string tag : song.topTags) {
         tagVal += tag+"\n";
     }
-    std::cout << "\nTagVal = " << tagVal << '\n';
     if (!tagVal.empty()) {
-        std::cout << "TEST\n";
         tags.value = std::move(tagVal);
         output.fields.push_back(tags);
     }
@@ -296,47 +253,7 @@ SleepyDiscord::Embed LastFMCommand::createEmbed(lastfm::User user){
     return output;
 }
 
-std::vector<std::string> LastFMCommand::parseParams(std::string rawParams) {
-    if (rawParams.empty()) {
-        throw IllegalArgumentException("No arguments given when they were needed!");
-    }
-    std::vector<std::string> params;
-    std::string temp = "";
-    bool inString = false;
-
-    for (char c : rawParams) {
-        if (inString) {
-            if (c == '>') {
-                inString = false;
-                if (!temp.empty()) {
-                    params.push_back(temp);
-                    temp.clear();
-                }
-            } else {
-                temp += c;
-            }
-        } else {
-            if (c == '<') {
-                inString = true;
-                temp.clear();
-            } else {
-                if (c == ' ') {
-                    if (!temp.empty()) {
-                        params.push_back(temp);
-                        temp.clear();
-                    }
-                } else {
-                    temp += c;
-                }
-            }
-        }
-    }
-
-    return params;
-}
-
 std::string LastFMCommand::longDescription() {
-    std::cout << "TEST FICKE 1\n";
     std::string help = "Search the last.fm database for music or users!\n";
     help            += "Usage: `Pod? lastfm ` + \n";
     help            += "`artist <artist name here>` - This will give you some information about the artist.\n";

@@ -9,30 +9,26 @@
 #include <curl/curl.h>
 #include "json.hpp"
 
-
-
-class IllegalArgumentException : public std::exception {
-    public:
-        explicit IllegalArgumentException(const std::string& message);
-        virtual const char* what() const throw();
-    private:
-        std::string message_;
-};
-
-class lastFMError : public std::exception {
-    public:
-        explicit lastFMError(const std::string& message);
-        virtual const char* what() const throw();
-    private:
-        std::string message_;
-};
-
+/**
+ * A class for retrieving and processing data
+ * from lastfm.
+ * 
+ * Needs an API Key in the enviroment variables! Has to be named `LASTFM_KEY`!
+ */
 class lastfm {
     using json = nlohmann::json;
     
     public:
+        /**
+         * Various information about an artist.
+         */
         struct Artist {
             public:
+                /**
+                 * Takes a string containing the artist as 
+                 * argument and retrieves all information it gets about that artist.
+                 * @param artist: The name of the artist.
+                 */
                 Artist(std::string);
 
                 std::string title;
@@ -42,13 +38,27 @@ class lastfm {
                 std::vector<std::string> topTags;
                 std::string image;
             private:
+                /**
+                 * Collects all wanted infos about the artist from lastfm.
+                 */
                 void getArtistInfo(std::string);
                 void getArtistInfo(json);
         };
 
+        /**
+         * Various information about a song.
+         */
         struct Song {
             public:
-                Song(std::string, std::string = "");
+                /**
+                 * Takes a string containing the song as 
+                 * argument and retrieves all information it gets about that song.
+                 * The second string carries the artist name, but it's optional.
+                 * 
+                 * @param songname: The name of the song.
+                 * @param artistname: The name of the artist.
+                 */
+                Song(std::string, std::string);
 
                 std::string title;
                 std::string artist;
@@ -62,13 +72,16 @@ class lastfm {
                 std::string duration;
                 std::string image;
             private:
-                void getSongInfo(std::string, std::string = "");
+                /**
+                 * Collects all wanted infos about the artist from lastfm.
+                 */
+                void getSongInfo(std::string, std::string);
                 void getSongInfo(json);
         };
 
         struct Album {
             public:
-                Album(std::string, std::string = "");
+                Album(std::string, std::string);
                 std::string title;
                 std::string artist;
 
@@ -86,7 +99,7 @@ class lastfm {
                 std::vector<track> tracks;
                 std::string image;
             private:
-                void getAlbumInfo(std::string, std::string = "");
+                void getAlbumInfo(std::string, std::string);
                 void getAlbumInfo(json);
         };
 

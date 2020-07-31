@@ -76,7 +76,7 @@ std::vector<Anime> MyAnimeListAPI::searchAnime(std::string name, int limit) {
         
 
 
-std::string getField(std::string fieldName, std::string source) {
+std::string MyAnimeListAPI::getField(std::string fieldName, std::string source) {
     std::string out = "Field \""+fieldName+"\" was not found!";
     std::string regex = "\\\""+fieldName+"\\\":\\\"(.*?)\\\"";
 

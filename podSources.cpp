@@ -5,6 +5,7 @@
 #include "sleepy_discord/websocketpp_websocket.h"
 
 #include "commands/include/command.h"
+#include "commands/include/exceptions.h"
 
 
 using namespace std;
@@ -21,7 +22,7 @@ public:
 		commands.insert(std::make_pair("lastfm", new LastFMCommand()));
 		commands.insert(std::make_pair("help", new Help(commands)));
 		//updateStatus(indicator + " Help");
-		updateStatus("Under Construction!");
+		updateStatus("sup me, yo");
 		cout << "RUNNING " << endl;
 	}
 
@@ -63,7 +64,7 @@ private:
 		if (commands.find(command) != commands.end()) {
 			return commands[command]->execute(param);
 		} else {
-			return commands["generic"]->execute(param);
+			return commands["help"]->execute(command);
 		}
 	} 
 };

@@ -7,14 +7,23 @@
 #include "myAnimeList.h"
 #include "lastfmAPI.h"
 
+/**
+ * A generic command.
+ */
 class Command {
     public:
         Command();
         virtual SleepyDiscord::SendMessageParams execute(std::string);
         virtual std::string description();
         virtual std::string longDescription();
+        virtual std::vector<std::string> parameterize(std::string);
 };
 
+/**
+ * Helpflul help command. 
+ * Will return a message with either a general overview over every possible command,
+ * or a help message for a specified command.
+ */
 class Help : public Command {
     public:
         Help(std::map<std::string, Command*>);
@@ -23,6 +32,9 @@ class Help : public Command {
         static std::map<std::string, Command*> availableCommands;
 };
 
+/**
+ * A command for owofieing strings.
+ */
 class OwOfier : public Command {
 public:
     OwOfier();
@@ -33,6 +45,11 @@ private:
     std::string owofy(std::string);
 };
 
+/**
+ * Commands for interacting with the MyAnimeList Database.
+ * If successfull, returns a message with information about 
+ * an anime/a mange/whatever the database has to offer.
+ */
 class MyAnimeListCommands : public Command {
     public:
         MyAnimeListCommands();
@@ -42,6 +59,11 @@ class MyAnimeListCommands : public Command {
         std::string longDescription();
 };
 
+/**
+ * Commands for interacting with the LastFM Database.
+ * If successfull, returns a message with information about 
+ * a song/an album/whatever the database has to offer.
+ */
 class LastFMCommand : public Command {
     public:
         LastFMCommand();
@@ -53,7 +75,6 @@ class LastFMCommand : public Command {
         SleepyDiscord::Embed createEmbed(lastfm::Artist);
         SleepyDiscord::Embed createEmbed(lastfm::Album);
         SleepyDiscord::Embed createEmbed(lastfm::User);
-        std::vector<std::string> parseParams(std::string);
 };
 
 #endif // !COMMANDS_H

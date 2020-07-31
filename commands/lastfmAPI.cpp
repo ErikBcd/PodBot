@@ -5,6 +5,7 @@
 #include <curl/curl.h>
 #include "include/json.hpp"
 #include "include/lastfmAPI.h"
+#include "include/exceptions.h"
 
 
 
@@ -19,6 +20,7 @@ void lastfm::Artist::getArtistInfo(std::string name) {
     }
     std::vector<std::string> arguments;
     arguments.push_back("artist="+name);
+    arguments.push_back("autocorrect=1");
     auto lastFMdata = json::parse(get("artist.getInfo", arguments));
 
     if (lastFMdata.find("error") != lastFMdata.end()) {
@@ -52,18 +54,17 @@ void lastfm::Artist::getArtistInfo(json lastFMdata) {
 
 
 lastfm::Song::Song(std::string name, std::string artist) {
-    getSongInfo(name, artist);
+    getSongInfo(name, artist); 
 }
 void lastfm::Song::getSongInfo(std::string name, std::string artist) {
-    if (name.empty()) {
-        throw IllegalArgumentException("Album name must not be empty!");
+    if (name.empty() || artist.empty()) {
+        throw IllegalArgumentException("Song and artist names must not be empty!");
     }
-
     std::vector<std::string> arguments;
     arguments.push_back("track="+name);
-    if (!artist.empty()) {
-        arguments.push_back("artist="+artist);
-    }
+    arguments.push_back("artist="+artist);
+    arguments.push_back("autocorrect=1");
+    
     auto lastFMdata = json::parse(get("track.getInfo", arguments));
     if (lastFMdata.find("error") != lastFMdata.end()) {
         std::string error = *lastFMdata.find("message");
@@ -78,6 +79,8 @@ void lastfm::Song::getSongInfo(json lastFMdata) {
     title = getField(lastFMdata, "name");
     lastFM_url = getField(lastFMdata, "url");
     duration = getField(lastFMdata, "duration");
+    std::cout << "DURATION: " << duration << std::endl;
+    duration = duration.substr(0, duration.size() -3);
     listeners = getField(lastFMdata, "listeners");
     playcount = getField(lastFMdata, "playcount");
 
@@ -104,15 +107,15 @@ lastfm::Album::Album(std::string name, std::string artist) {
 }
 
 void lastfm::Album::getAlbumInfo(std::string name, std::string artist) {
-    if (name.empty()) {
-        throw IllegalArgumentException("Album name must not be empty!");
+    if (name.empty() || artist.empty()) {
+        throw IllegalArgumentException("Album and artist names must not be empty!");
     }
 
     std::vector<std::string> arguments;
     arguments.push_back("album="+name);
-    if (!artist.empty()) {
-        arguments.push_back("artist="+artist);
-    }
+    arguments.push_back("autocorrect=1");
+    arguments.push_back("artist="+artist);
+    
     auto lastFMdata = json::parse(get("album.getInfo", arguments));
     if (lastFMdata.find("error") != lastFMdata.end()) {
         std::string error = *lastFMdata.find("message");
@@ -193,27 +196,6 @@ void lastfm::User::getUserInfo(json lastFMdata) {
     url          = getField(lastFMdata, "url");
     image        = getImage(lastFMdata, "medium");
     playlists    = getField(lastFMdata, "playlists");
-}
-
-     
-
-
- 
-IllegalArgumentException::IllegalArgumentException(const std::string& message) {
-    message_ = message;
-}
-const char* IllegalArgumentException::what() const throw() {
-    return message_.c_str();
-}
-
-
-lastFMError::lastFMError(const std::string& message) {
-    message_ = message;
-    std::cout << "M1\n";
-}
-const char* lastFMError::what() const throw() {
-    std::cout << "Sending error: " << message_ << "\n";
-    return message_.c_str();
 }
 
 using json = nlohmann::json;

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <regex>
 
+#include "include/exceptions.h"
 #include "include/command.h"
 #include "include/lastfmAPI.h"
 #include "sleepy_discord/sleepy_discord.h"
@@ -64,9 +65,15 @@ SleepyDiscord::SendMessageParams LastFMCommand::execute(std::string args) {
                     embed = createEmbed(lastfm::Artist(search));          
                     break;
                 case 2:
+                    if (lastFMparams.empty()) {
+                        throw IllegalArgumentException("Usage: Pod? lastfm album <album> <artist>");
+                    }
                     embed = createEmbed(lastfm::Album(search, lastFMparams.front()));
                     break;
                 case 3:
+                    if (lastFMparams.empty()) {
+                        throw IllegalArgumentException("Usage: Pod? lastfm song <song> <artist>");
+                    }
                     embed = createEmbed(lastfm::Song(search, lastFMparams.front()));
                     break;
         }
@@ -74,11 +81,15 @@ SleepyDiscord::SendMessageParams LastFMCommand::execute(std::string args) {
         catch(const std::exception& e)
         {
             SleepyDiscord::SendMessageParams params;
-            params.content = std::move("Error: "+((std::string) e.what()));
+            params.content = std::move("Error <:podAngry:739476530727616552> "+((std::string) e.what()));
             return params;
         }
         
         
+    } else {
+	    SleepyDiscord::SendMessageParams params;
+	    params.content = std::move("Error <:podAngry:739476530727616552> The command was not found!");
+	    return params;
     }
 
     SleepyDiscord::SendMessageParams params;

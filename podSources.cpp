@@ -27,8 +27,11 @@ public:
 	}
 
 	void onMessage(SleepyDiscord::Message message) {
-		
-		if (message.startsWith(indicator)) {
+		if (message.author.bot) {
+			return;
+		}
+		try {
+			if (message.startsWith(indicator)) {
 			string msg = message.content;
 			msg = msg.substr(indicator.size(), msg.size() - indicator.size());
 			// Some preprocessing
@@ -41,9 +44,21 @@ public:
 
 			SleepyDiscord::SendMessageParams params = executeCommand(msg);
 			params.channelID = message.channelID;
-
+			
 			sendMessage(params);
+			
+			
+			} else if (message.startsWith("Pod!") || message.startsWith("pod!")) {
+				if (message.author.username != "Falcon") {
+					sendMessage(message.channelID, message.author.username +"!");
+				}
+			}
+		} catch(SleepyDiscord::ErrorCode e) {
+			std::cerr << "ALARM! ALAAHAARM!\n" << std::endl;
 		}
+		// else if (message.content.find("Pod") != string::npos) {
+			//addReaction(message.channelID, message.ID, "<:KirbyWut:367233418838278145>");
+		//}
 	}
 private:
 	const string indicator = "Pod? ";

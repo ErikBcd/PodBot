@@ -8,6 +8,10 @@ Help::Help(std::map<std::string, Command*> commands) {
     Help::availableCommands = commands;
 }
 
+bool Help::isSecret() {
+    return true;
+}
+
 SleepyDiscord::SendMessageParams Help::execute(std::string command) {
     SleepyDiscord::Embed embed;
     if (availableCommands.find(command) != availableCommands.end()) {
@@ -19,11 +23,11 @@ SleepyDiscord::SendMessageParams Help::execute(std::string command) {
         embed.author.name = "Estugon";
     } else if (command.empty()) {
         embed.title = std::move("Pod Info");
-        embed.description = std::move("This is a little side project I am working on, so this bot is by no means perfect.\nHowever, do you know what is perfect? That profile picture, made by Niatsuna! <:furYAY:556919123809140757> (insert an actual emote here. Dont't you forget it, Erik. >:( )");
+        embed.description = std::move("This is a little side project I am working on, so this bot is by no means perfect.\nHowever, do you know what is perfect? That profile picture, made by Niatsuna! <:podYay:739476531449036941>");
         embed.author.iconUrl = std::move("https://cdn.discordapp.com/avatars/702297628318236674/19fac1c410c614d0e0745a44c3321d46.png?size=256");
         embed.author.name = "Estugon";
         for (std::map<std::string, Command*>::iterator it = availableCommands.begin(); it != availableCommands.end(); ++it) {
-            if (it->first != "generic") {
+            if (it->first != "generic" && !it->second->isSecret()) {
                 SleepyDiscord::EmbedField field;
                 field.name = std::move(it->first);
                 field.value = std::move(it->second->description());
@@ -36,7 +40,7 @@ SleepyDiscord::SendMessageParams Help::execute(std::string command) {
         embed.author.iconUrl = std::move("https://cdn.discordapp.com/avatars/702297628318236674/19fac1c410c614d0e0745a44c3321d46.png?size=256");
         embed.author.name = "Estugon";
         for (std::map<std::string, Command*>::iterator it = availableCommands.begin(); it != availableCommands.end(); ++it) {
-            if (it->first != "generic") {
+            if (it->first != "generic" && !it->second->isSecret()) {
                 SleepyDiscord::EmbedField field;
                 field.name = std::move(it->first);
                 field.value = std::move(it->second->description());

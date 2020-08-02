@@ -64,7 +64,7 @@ void lastfm::Song::getSongInfo(std::string name, std::string artist) {
     arguments.push_back("track="+name);
     arguments.push_back("artist="+artist);
     arguments.push_back("autocorrect=1");
-    
+
     auto lastFMdata = json::parse(get("track.getInfo", arguments));
     if (lastFMdata.find("error") != lastFMdata.end()) {
         std::string error = *lastFMdata.find("message");
@@ -79,7 +79,6 @@ void lastfm::Song::getSongInfo(json lastFMdata) {
     title = getField(lastFMdata, "name");
     lastFM_url = getField(lastFMdata, "url");
     duration = getField(lastFMdata, "duration");
-    std::cout << "DURATION: " << duration << std::endl;
     duration = duration.substr(0, duration.size() -3);
     listeners = getField(lastFMdata, "listeners");
     playcount = getField(lastFMdata, "playcount");

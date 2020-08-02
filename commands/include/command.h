@@ -17,6 +17,7 @@ class Command {
         virtual std::string description();
         virtual std::string longDescription();
         virtual std::vector<std::string> parameterize(std::string);
+        virtual bool isSecret();
 };
 
 /**
@@ -28,8 +29,10 @@ class Help : public Command {
     public:
         Help(std::map<std::string, Command*>);
         SleepyDiscord::SendMessageParams execute(std::string);
+        bool isSecret();
     private:
         static std::map<std::string, Command*> availableCommands;
+        
 };
 
 /**
@@ -75,6 +78,14 @@ class LastFMCommand : public Command {
         SleepyDiscord::Embed createEmbed(lastfm::Artist);
         SleepyDiscord::Embed createEmbed(lastfm::Album);
         SleepyDiscord::Embed createEmbed(lastfm::User);
+};
+
+class Kohaku : public Command {
+    public:
+        Kohaku();
+        SleepyDiscord::SendMessageParams execute(std::string);
+        bool isSecret();
+        virtual std::string longDescription();
 };
 
 #endif // !COMMANDS_H

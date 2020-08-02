@@ -20,6 +20,7 @@ public:
     	commands.insert(std::make_pair("mal", new MyAnimeListCommands()));
     	commands.insert(std::make_pair("generic", new Command()));
 		commands.insert(std::make_pair("lastfm", new LastFMCommand()));
+		commands.insert(std::make_pair("kohaku", new Kohaku()));
 		commands.insert(std::make_pair("help", new Help(commands)));
 		//updateStatus(indicator + " Help");
 		updateStatus("sup me, yo");
@@ -56,9 +57,6 @@ public:
 		} catch(SleepyDiscord::ErrorCode e) {
 			std::cerr << "ALARM! ALAAHAARM!\n" << std::endl;
 		}
-		// else if (message.content.find("Pod") != string::npos) {
-			//addReaction(message.channelID, message.ID, "<:KirbyWut:367233418838278145>");
-		//}
 	}
 private:
 	const string indicator = "Pod? ";

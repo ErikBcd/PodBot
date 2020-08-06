@@ -28,10 +28,8 @@ public:
 	}
 
 	void onMessage(SleepyDiscord::Message message) {
-		if (message.author.bot) {
-			return;
-		}
 		try {
+<<<<<<< Updated upstream
 			if (message.startsWith(indicator)) {
 			string msg = message.content;
 			msg = msg.substr(indicator.size(), msg.size() - indicator.size());
@@ -49,6 +47,26 @@ public:
 			sendMessage(params);
 			
 			
+=======
+			if (message.author.bot) {
+				return;
+			}
+			if (stringBeginsWith(message.content, indicator)) {
+				string msg = message.content;
+				msg = msg.substr(indicator.size(), msg.size() - indicator.size());
+				// Some preprocessing
+				int i = 0;
+				for (char c : msg) {
+					c = std::tolower(c);
+					msg.at(i) = c;
+					i++;
+				}
+
+				SleepyDiscord::SendMessageParams params = executeCommand(msg);
+				params.channelID = message.channelID;
+				
+				sendMessage(params);
+>>>>>>> Stashed changes
 			} else if (message.startsWith("Pod!") || message.startsWith("pod!")) {
 				if (message.author.username != "Falcon") {
 					sendMessage(message.channelID, message.author.username +"!");

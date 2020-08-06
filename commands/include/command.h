@@ -85,7 +85,8 @@ class Kohaku : public Command {
         Kohaku();
         SleepyDiscord::SendMessageParams execute(std::string);
         bool isSecret();
-        virtual std::string longDescription();
+        std::string longDescription();
 };
+
 
 #endif // !COMMANDS_H

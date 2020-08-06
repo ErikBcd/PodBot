@@ -71,7 +71,7 @@ SleepyDiscord::SendMessageParams MyAnimeListCommands::execute(std::string param)
     SleepyDiscord::SendMessageParams params;
     //Anime result = MyAnimeListAPI::searchAnime(param).front();
     //params.embed = createEmbed(result);
-    params.content = std::move("Sorry, this command is currently in development! >w<");
+    params.content = std::move("<@157491513054461953> still didn't finish this command, god dammit <:podAngry:739476530727616552>");
     return params;
 }
 

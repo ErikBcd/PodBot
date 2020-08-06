@@ -29,29 +29,11 @@ public:
 
 	void onMessage(SleepyDiscord::Message message) {
 		try {
-<<<<<<< Updated upstream
-			if (message.startsWith(indicator)) {
-			string msg = message.content;
-			msg = msg.substr(indicator.size(), msg.size() - indicator.size());
-			// Some preprocessing
-			int i = 0;
-			for (char c : msg) {
-				c = std::tolower(c);
-				msg.at(i) = c;
-				i++;
-			}
-
-			SleepyDiscord::SendMessageParams params = executeCommand(msg);
-			params.channelID = message.channelID;
-			
-			sendMessage(params);
-			
-			
-=======
-			if (message.author.bot) {
+			std::string messageContent = message.content;
+			if (message.author.bot || messageContent.empty()) {
 				return;
 			}
-			if (stringBeginsWith(message.content, indicator)) {
+			if (stringBeginsWith(messageContent, indicator)) {
 				string msg = message.content;
 				msg = msg.substr(indicator.size(), msg.size() - indicator.size());
 				// Some preprocessing
@@ -66,11 +48,19 @@ public:
 				params.channelID = message.channelID;
 				
 				sendMessage(params);
->>>>>>> Stashed changes
+			
+			
 			} else if (message.startsWith("Pod!") || message.startsWith("pod!")) {
 				if (message.author.username != "Falcon") {
 					sendMessage(message.channelID, message.author.username +"!");
 				}
+			} else if (message.isMentioned("702297628318236674")) {
+				sendMessage(message.channelID, "<:podPing:739476530727747656>");
+			} else if (message.startsWith("PodUpdate") && message.author.ID == "157491513054461953") {
+				string msg = message.content;
+				msg = msg.substr(10, msg.size() - 10);
+				updateStatus(msg);
+				addReaction(message.channelID, message.ID, ":podYay:739476531449036941");
 			}
 		} catch(SleepyDiscord::ErrorCode e) {
 			std::cerr << "ALARM! ALAAHAARM!\n" << std::endl;
@@ -79,6 +69,20 @@ public:
 private:
 	const string indicator = "Pod? ";
 	map<string, Command*> commands;
+
+	bool stringBeginsWith(std::string source, std::string key) {
+		if (source.size() < key.size()) {
+			return false;
+		}
+		for (size_t i = 0; i < key.size(); i++) {
+			if (source[i] - key[i] != 0 && abs(source[i] - key[i]) != 32) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	SleepyDiscord::SendMessageParams executeCommand(string commandRaw) {
 		string command;
 		string param;

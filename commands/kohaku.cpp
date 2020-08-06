@@ -11,7 +11,7 @@ Kohaku::Kohaku() {
 
 SleepyDiscord::SendMessageParams Kohaku::execute(std::string param) {
     SleepyDiscord::SendMessageParams params;
-    params.content = std::move("Heya! Do you know Kohaku? If not, you should, he's my best friend after all!\nOh and btw, I get angry at everyone who has a problem with Kohaku. Like, really angry.\n<:podAngry:739476530727616552>");
+    params.content = std::move("Heya! Do you know Kohaku? If not, you should!\nOh and btw, I get angry at everyone who has a problem with Kohaku. Like, really angry.\n<:podAngry:739476530727616552>");
     return params;
 }
 

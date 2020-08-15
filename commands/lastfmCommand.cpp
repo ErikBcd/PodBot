@@ -16,7 +16,7 @@ LastFMCommand::LastFMCommand() {}
  * Pod? lastfm song "name" (-a "artist name") -> Song
  * Pod? lastfm user "name" -> User
  */
-SleepyDiscord::SendMessageParams LastFMCommand::execute(std::string args) {
+SleepyDiscord::SendMessageParams LastFMCommand::execute(std::string args, SleepyDiscord::Message*) {
     std::string command;
     std::string param;
     std::map<std::string, int> commands;

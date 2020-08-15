@@ -7,7 +7,7 @@
 
 
 Command::Command() {}
-SleepyDiscord::SendMessageParams Command::execute(std::string param) 
+SleepyDiscord::SendMessageParams Command::execute(std::string param, SleepyDiscord::Message*) 
 {
     SleepyDiscord::SendMessageParams params;
     params.content = "The specified command was not found!";

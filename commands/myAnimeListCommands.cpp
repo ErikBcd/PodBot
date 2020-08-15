@@ -67,7 +67,7 @@ SleepyDiscord::Embed MyAnimeListCommands::createEmbed(Anime input) {
     return embed;
 }
 
-SleepyDiscord::SendMessageParams MyAnimeListCommands::execute(std::string param) {
+SleepyDiscord::SendMessageParams MyAnimeListCommands::execute(std::string param, SleepyDiscord::Message* message) {
     SleepyDiscord::SendMessageParams params;
     //Anime result = MyAnimeListAPI::searchAnime(param).front();
     //params.embed = createEmbed(result);

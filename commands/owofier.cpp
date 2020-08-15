@@ -43,7 +43,7 @@ std::string OwOfier::owofy(std::string input) {
     return output;
 }
 
-SleepyDiscord::SendMessageParams OwOfier::execute(std::string param) 
+SleepyDiscord::SendMessageParams OwOfier::execute(std::string param, SleepyDiscord::Message* message) 
 {
     SleepyDiscord::SendMessageParams params;
     params.content = owofy(param);

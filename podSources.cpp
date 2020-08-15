@@ -7,6 +7,8 @@
 #include "commands/include/command.h"
 #include "commands/include/exceptions.h"
 
+#define SHORT_INDICATOR '['
+
 
 using namespace std;
 
@@ -21,35 +23,23 @@ public:
     	commands.insert(std::make_pair("generic", new Command()));
 		commands.insert(std::make_pair("lastfm", new LastFMCommand()));
 		commands.insert(std::make_pair("kohaku", new Kohaku()));
+		commands.insert(std::make_pair("pat", new Pat()));
 		commands.insert(std::make_pair("help", new Help(commands)));
 		//updateStatus(indicator + " Help");
-		updateStatus("sup me, yo");
+		updateStatus("Pod? help");
 		cout << "RUNNING " << endl;
 	}
 
 	void onMessage(SleepyDiscord::Message message) {
+		cout << "Got message\n";
+		if (message.author.bot) {
+			return;
+		}
 		try {
-			std::string messageContent = message.content;
-			if (message.author.bot || messageContent.empty()) {
-				return;
-			}
-			if (stringBeginsWith(messageContent, indicator)) {
-				string msg = message.content;
-				msg = msg.substr(indicator.size(), msg.size() - indicator.size());
-				// Some preprocessing
-				int i = 0;
-				for (char c : msg) {
-					c = std::tolower(c);
-					msg.at(i) = c;
-					i++;
-				}
-
-				SleepyDiscord::SendMessageParams params = executeCommand(msg);
+			if (stringBeginsWith(message.content, indicator) || message.content[0] == SHORT_INDICATOR) {
+				SleepyDiscord::SendMessageParams params = executeCommand(&message);
 				params.channelID = message.channelID;
-				
 				sendMessage(params);
-			
-			
 			} else if (message.startsWith("Pod!") || message.startsWith("pod!")) {
 				if (message.author.username != "Falcon") {
 					sendMessage(message.channelID, message.author.username +"!");
@@ -71,6 +61,7 @@ private:
 	map<string, Command*> commands;
 
 	bool stringBeginsWith(std::string source, std::string key) {
+		cout << "Src: " << source << " Key: " << key << endl;
 		if (source.size() < key.size()) {
 			return false;
 		}
@@ -83,23 +74,43 @@ private:
 		return true;
 	}
 
-	SleepyDiscord::SendMessageParams executeCommand(string commandRaw) {
+	SleepyDiscord::SendMessageParams executeCommand(SleepyDiscord::Message* message) {
+		string msg = message->content;
+		if (message->content[0] == SHORT_INDICATOR) {
+			msg = msg.substr(1, msg.size() - 1);
+		} else {
+			msg = msg.substr(indicator.size(), msg.size() - indicator.size());
+		}
+		cout << "MSG = " << msg << '\n';
+		// Some preprocessing
+		int i = 0;
+		for (char c : msg) {
+			c = std::tolower(c);
+			msg.at(i) = c;
+			i++;
+		}
+
 		string command;
 		string param;
 
-		size_t space_pos = commandRaw.find(" ");
+		size_t space_pos = msg.find(" ");
 		if (space_pos != string::npos) {
-			command = commandRaw.substr(0, space_pos);
-			param = commandRaw.substr(command.size() + 1, 
-					commandRaw.size() - command.size());
+			command = msg.substr(0, space_pos);
+			param = msg.substr(command.size() + 1, 
+					msg.size() - command.size());
 		} else {
-			command = commandRaw;
+			command = msg;
 		}
+		std::cout << "Command = " << command << " Param = " << param << '\n';
 
 		if (commands.find(command) != commands.end()) {
-			return commands[command]->execute(param);
+			return commands[command]->execute(param, message);
 		} else {
-			return commands["help"]->execute(command);
+			return commands["help"]->execute(command, message);
 		}
 	} 
 };
+
+	
+
+	

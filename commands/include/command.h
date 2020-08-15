@@ -6,6 +6,7 @@
 #include "sleepy_discord/sleepy_discord.h"
 #include "myAnimeList.h"
 #include "lastfmAPI.h"
+#include "json.hpp"
 
 /**
  * A generic command.
@@ -13,7 +14,7 @@
 class Command {
     public:
         Command();
-        virtual SleepyDiscord::SendMessageParams execute(std::string);
+        virtual SleepyDiscord::SendMessageParams execute(std::string, SleepyDiscord::Message*);
         virtual std::string description();
         virtual std::string longDescription();
         virtual std::vector<std::string> parameterize(std::string);
@@ -28,7 +29,7 @@ class Command {
 class Help : public Command {
     public:
         Help(std::map<std::string, Command*>);
-        SleepyDiscord::SendMessageParams execute(std::string);
+        SleepyDiscord::SendMessageParams execute(std::string, SleepyDiscord::Message*);
         bool isSecret();
     private:
         static std::map<std::string, Command*> availableCommands;
@@ -41,7 +42,7 @@ class Help : public Command {
 class OwOfier : public Command {
 public:
     OwOfier();
-    SleepyDiscord::SendMessageParams execute(std::string);
+    SleepyDiscord::SendMessageParams execute(std::string, SleepyDiscord::Message*);
     std::string description();
     std::string longDescription();
 private:
@@ -56,7 +57,7 @@ private:
 class MyAnimeListCommands : public Command {
     public:
         MyAnimeListCommands();
-        SleepyDiscord::SendMessageParams execute(std::string);
+        SleepyDiscord::SendMessageParams execute(std::string, SleepyDiscord::Message*);
         SleepyDiscord::Embed createEmbed(Anime);
         std::string description();
         std::string longDescription();
@@ -70,7 +71,7 @@ class MyAnimeListCommands : public Command {
 class LastFMCommand : public Command {
     public:
         LastFMCommand();
-        SleepyDiscord::SendMessageParams execute(std::string);
+        SleepyDiscord::SendMessageParams execute(std::string, SleepyDiscord::Message*);
         std::string description();
         std::string longDescription();
     private:
@@ -83,9 +84,25 @@ class LastFMCommand : public Command {
 class Kohaku : public Command {
     public:
         Kohaku();
-        SleepyDiscord::SendMessageParams execute(std::string);
+        SleepyDiscord::SendMessageParams execute(std::string, SleepyDiscord::Message*);
         bool isSecret();
         std::string longDescription();
+};
+
+class Pat : public Command {
+    public:
+        Pat();
+        SleepyDiscord::SendMessageParams execute(std::string, SleepyDiscord::Message*);
+        std::string description();
+        std::string longDescription();
+    private:
+        static nlohmann::json patData; 
+        void pat(std::string, std::string);
+        int getPatReceivedCount(std::string);
+        int getPatGivenCount(std::string);
+        bool stringBeginsWith(std::string, std::string); //TODO: Put this in another helper headerfile, you dumbass
+        void loadData();
+        void saveData();
 };
 
 

@@ -6,16 +6,6 @@
 #include "include/json.hpp"
 #include "sleepy_discord/sleepy_discord.h"
 
-/*
-Pat();
-        SleepyDiscord::SendMessageParams execute(std::string);
-        std::string description();
-        std::string longDescription();
-    private:
-        void loadData();
-        void saveData();
-        */
-
 using json = nlohmann::json;
 
 Pat::Pat() {
@@ -23,13 +13,15 @@ Pat::Pat() {
 }
 
 SleepyDiscord::SendMessageParams Pat::execute(std::string param, SleepyDiscord::Message* message) {
+    std::vector<SleepyDiscord::User> mentionedUsers = message->mentions;
     std::string user = message->author.ID;
-    std::cout << "User: " << user << " Params: " << param << '\n';
     SleepyDiscord::SendMessageParams params;
     if (stringBeginsWith(param, ("<@!"+user)) || stringBeginsWith(param, ("<@"+user))) {
         params.content = std::move("\\*headpats you\\*");
         return params;
     }
+
+    // Parameterize the input
     std::vector<std::string> parameters;
     if (!param.empty()) {
         parameters = parameterize(param);
@@ -38,57 +30,44 @@ SleepyDiscord::SendMessageParams Pat::execute(std::string param, SleepyDiscord::
         }
     }
 
-    // Since the second argument has to be a user, we can try to reformat the user to the correct id
-    if (parameters.size() > 1) {
-        std::string target = parameters.at(1);
-        if (target[0] == '@') {
-            if (target[1] == '!') {
-                target = target.substr(2, target.size() - 2);
-            } else {
-                target = target.substr(1, target.size() - 1);
-            }
-            std::cout << "Target: " << target << '\n';
-            parameters.at(1).swap(target);
-        }
-    }
+    // Determine what the user wants!
     if (parameters.empty() || stringBeginsWith(param, "pod") || stringBeginsWith(param, "<@!702297628318236674>") || stringBeginsWith(param, "<@702297628318236674>")) {
-        std::cout << "Got Patted!\n";
+        // Patting Pod himself
         pat(user, "pod");
         params.content = std::move("uwu");
-    } else if (stringBeginsWith(param, "rcount")) {
-        std::cout << "r!\n";
-        if (parameters.size() == 1) {
+    } else if (parameters.at(0) == "gcount") {
+        // Access the number of times a user headpatted someone else
+        if (mentionedUsers.empty() || mentionedUsers.front().ID.string() == "702297628318236674") {
+            // If no argument is given, return the total count of times people have been headpatted
+            int count = getPatGivenCount("pod");
+            int fullCount = count + getPatReceivedCount("pod");
+            params.content = std::move("Overall, I gave **"+std::to_string(count)+"** headpats to the people! <:podYay:739476531449036941>\n(Including the headpats I received, **"+std::to_string(fullCount)+"** heads have been patted!!)");
+        } else if (!mentionedUsers.empty()) {
+            int count = getPatGivenCount(mentionedUsers.front().ID);
+            params.content = std::move(("<"+mentionedUsers.front().username+"> has given **"+std::to_string(count)+"** headpats to other people!"));
+        }
+    } else if (parameters.at(0) == "rcount") {
+        // Access the number of times a user has been headpatted
+        if (mentionedUsers.empty() || mentionedUsers.front().ID.string() == "702297628318236674") {
             int count = getPatReceivedCount("pod");
-            params.content = std::move("I have been patted "+std::to_string(count)+" times already! <:podYay:739476531449036941>");
-        } else {
-            int count = getPatReceivedCount(parameters.at(1));
-            if (parameters.at(1)[0] != '!') {
-                std::string temp = "!";
-                temp += parameters.at(1);
-                parameters.at(1).swap(temp);
-            }
-            params.content = std::move("<@"+parameters.at(1)+"> was pattet "+std::to_string(count)+ " times!");
+            params.content = std::move("I have been patted **"+std::to_string(count)+"** times already! <:podYay:739476531449036941>");
+        } else if (!mentionedUsers.empty()) {
+            int count = getPatReceivedCount(mentionedUsers.front().ID);
+            params.content = std::move("<"+mentionedUsers.front().username+"> has been patted **"+std::to_string(count)+"** times!");
         }
-    } else if (stringBeginsWith(param, "gcount")) {
-        std::cout << "g\n";
-        if (parameters.size() > 1) {
-            int count = getPatGivenCount(parameters.at(1));
-            params.content = std::move("<@"+parameters.at(1)+"> has patted other people " + std::to_string(count)+" times!");
-        } else {
-            params.content = std::move("I need the of the person whose headpat count you want to know!");
+    } else if (!mentionedUsers.empty()) {
+        // Headpat one or more users
+        std::string answer = (mentionedUsers.size() > 1) ? "Multi-Headpat!\nPatted " : "Patted ";
+        for (size_t i = 0; i < mentionedUsers.size(); i++) {
+            answer += mentionedUsers.at(i).username;
+            answer += (i == mentionedUsers.size() - 1) ? "" : ", ";
+            pat(user, mentionedUsers.at(i).ID);
         }
-    } else if (parameters.at(0)[0] == '@') {
-        std::string target = parameters.at(0);
-        if (target.size() > 2) {
-            target = target.substr(2, target.size() - 2);
-            pat(user, target);
-            params.content = std::move("Patted <"+parameters.at(0)+">!");
-        } else {
-            params.content = std::move("The user was not found :(");
-        }
+        answer += "!";
+        params.content = std::move(answer);
     } else {
-        std::string error = "Sorry, I don't know what I can do for you D: \n" + longDescription();
-        params.content = std::move(error);
+        // If you are here, nothing of meaning has been written
+        params.content = std::move("I don't really know what "+parameters.at(0)+" means, maybe it was a typo? Try one of these instead:\n"+longDescription());
     }
 
     return params;
@@ -97,6 +76,8 @@ SleepyDiscord::SendMessageParams Pat::execute(std::string param, SleepyDiscord::
 json Pat::patData;
 
 void Pat::pat(std::string source, std::string target) {
+
+    // Look if the user exist in the json, and then either create the user or update the users values
     if (patData["headpat_count"]["user"].contains(target)) {
         int receivedCount = patData["headpat_count"]["user"][target].value<int>("received", -1);
         if (receivedCount == -1) {
@@ -121,23 +102,41 @@ void Pat::pat(std::string source, std::string target) {
         patData["headpat_count"]["user"][source] = {{"received", 0}, {"given", 1}};
     }
 
+    // For some overall stats: The accumulated given pats are saved in pod's "given" entry.
+    if (patData["headpat_count"]["user"].contains("pod") && target != "pod") {
+        int givenCount = patData["headpat_count"]["user"]["pod"].value<int>("given", -1);
+        if (givenCount == -1) {
+            std::cout << "PAT ERROR: GIVEN COUNT == -1\n";
+            return;
+        }
+        givenCount++;
+        patData["headpat_count"]["user"]["pod"]["given"] = givenCount;
+    } else if (target != "pod") {
+        patData["headpat_count"]["user"]["pod"] = {{"received", 0}, {"given", 1}};
+    }
+
     saveData();
 }
+
 
 void Pat::saveData() {
     std::string dataString = patData.dump();
     struct stat buffer;
+    // At first. delete the old backup...
     if (stat("PAT_DATA_BACKUP.json", &buffer) == 0) {
         if (remove("PAT_DATA_BACKUP.json") != 0) {
             std::cout << "Could not delete Backup File!\n";
         }
     }
+
+    // ..then rename the old database (so it is the new backup)...
     if (stat("PAT_DATA.json", &buffer) == 0) {
         if (rename("PAT_DATA.json", "PAT_DATA_BACKUP.json") != 0) {
             std::cout << "Error renaming old PAT_DATA!\n";
         }
     }
 
+    // ...and after that, write the new json file to disk.
     std::ofstream out("PAT_DATA.json");
     out << dataString;
     out.close();

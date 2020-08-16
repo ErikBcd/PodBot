@@ -97,12 +97,42 @@ class Pat : public Command {
         std::string longDescription();
     private:
         static nlohmann::json patData; 
+
+        /**
+         * Headpats a specific user and updates the json database.
+         * @param source: The user who is headpatting someone.
+         * @param target: The user who is getting headpatted.
+         */
         void pat(std::string, std::string);
+
+        /**
+         * Get the number of times a user was headpatted.
+         * @param user: The ID of the user.
+         */
         int getPatReceivedCount(std::string);
+
+        /**
+         * Get the number of times a user has headpatted someone.
+         * @param user: The ID of the user.
+         */
         int getPatGivenCount(std::string);
         bool stringBeginsWith(std::string, std::string); //TODO: Put this in another helper headerfile, you dumbass
+
+        /**
+         * Loads the saved json data from disk into memory.
+         */
         void loadData();
+        /**
+         * Write the json database to the harddrive.
+         */
         void saveData();
+
+        /**
+         * Try to find a user on a server via it's nickname
+         * @param username: The users name.
+         * @param serverID: The ID of the server the user is on.
+         */
+        static std::string findUserID(std::string, std::string serverID);
 };
 
 

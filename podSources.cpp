@@ -25,25 +25,24 @@ public:
 		commands.insert(std::make_pair("kohaku", new Kohaku()));
 		commands.insert(std::make_pair("pat", new Pat()));
 		commands.insert(std::make_pair("help", new Help(commands)));
-		//updateStatus(indicator + " Help");
 		updateStatus("Pod? help");
 		cout << "RUNNING " << endl;
 	}
 
 	void onMessage(SleepyDiscord::Message message) {
 		cout << "Got message\n";
+		
 		if (message.author.bot) {
 			return;
 		}
+		
 		try {
 			if (stringBeginsWith(message.content, indicator) || message.content[0] == SHORT_INDICATOR) {
 				SleepyDiscord::SendMessageParams params = executeCommand(&message);
 				params.channelID = message.channelID;
 				sendMessage(params);
 			} else if (message.startsWith("Pod!") || message.startsWith("pod!")) {
-				if (message.author.username != "Falcon") {
-					sendMessage(message.channelID, message.author.username +"!");
-				}
+				sendMessage(message.channelID, message.author.username +"!");
 			} else if (message.isMentioned("702297628318236674")) {
 				sendMessage(message.channelID, "<:podPing:739476530727747656>");
 			} else if (message.startsWith("PodUpdate") && message.author.ID == "157491513054461953") {
@@ -56,12 +55,12 @@ public:
 			std::cerr << "ALARM! ALAAHAARM!\n" << std::endl;
 		}
 	}
+	
 private:
 	const string indicator = "Pod? ";
 	map<string, Command*> commands;
 
 	bool stringBeginsWith(std::string source, std::string key) {
-		cout << "Src: " << source << " Key: " << key << endl;
 		if (source.size() < key.size()) {
 			return false;
 		}
@@ -76,12 +75,12 @@ private:
 
 	SleepyDiscord::SendMessageParams executeCommand(SleepyDiscord::Message* message) {
 		string msg = message->content;
+
 		if (message->content[0] == SHORT_INDICATOR) {
 			msg = msg.substr(1, msg.size() - 1);
 		} else {
 			msg = msg.substr(indicator.size(), msg.size() - indicator.size());
 		}
-		cout << "MSG = " << msg << '\n';
 		// Some preprocessing
 		int i = 0;
 		for (char c : msg) {
@@ -101,7 +100,6 @@ private:
 		} else {
 			command = msg;
 		}
-		std::cout << "Command = " << command << " Param = " << param << '\n';
 
 		if (commands.find(command) != commands.end()) {
 			return commands[command]->execute(param, message);

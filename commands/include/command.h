@@ -3,6 +3,7 @@
 
 
 #include <iostream>
+#include <map>
 #include "sleepy_discord/sleepy_discord.h"
 #include "myAnimeList.h"
 #include "lastfmAPI.h"
@@ -91,12 +92,13 @@ class Kohaku : public Command {
 
 class Pat : public Command {
     public:
-        Pat();
+        Pat(SleepyDiscord::DiscordClient*);
         SleepyDiscord::SendMessageParams execute(std::string, SleepyDiscord::Message*);
         std::string description();
         std::string longDescription();
     private:
         static nlohmann::json patData; 
+        static SleepyDiscord::DiscordClient* client;
 
         /**
          * Headpats a specific user and updates the json database.
@@ -132,7 +134,10 @@ class Pat : public Command {
          * @param username: The users name.
          * @param serverID: The ID of the server the user is on.
          */
-        static std::string findUserID(std::string, std::string serverID);
+        std::string findUserID(std::string, std::string serverID);
+
+        static bool mayRefreshCache;
+        static std::map<std::string, nlohmann::json> membersOnServer;
 };
 
 

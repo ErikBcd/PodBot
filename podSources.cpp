@@ -23,7 +23,7 @@ public:
     	commands.insert(std::make_pair("generic", new Command()));
 		commands.insert(std::make_pair("lastfm", new LastFMCommand()));
 		commands.insert(std::make_pair("kohaku", new Kohaku()));
-		commands.insert(std::make_pair("pat", new Pat()));
+		commands.insert(std::make_pair("pat", new Pat(this)));
 		commands.insert(std::make_pair("help", new Help(commands)));
 		updateStatus("Pod? help");
 		cout << "RUNNING " << endl;

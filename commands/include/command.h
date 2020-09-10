@@ -3,6 +3,7 @@
 
 
 #include <iostream>
+#include <map>
 #include "sleepy_discord/sleepy_discord.h"
 #include "myAnimeList.h"
 #include "lastfmAPI.h"
@@ -91,12 +92,13 @@ class Kohaku : public Command {
 
 class Pat : public Command {
     public:
-        Pat();
+        Pat(SleepyDiscord::DiscordClient*);
         SleepyDiscord::SendMessageParams execute(std::string, SleepyDiscord::Message*);
         std::string description();
         std::string longDescription();
     private:
         static nlohmann::json patData; 
+        static SleepyDiscord::DiscordClient* client;
 
         /**
          * Headpats a specific user and updates the json database.
@@ -132,7 +134,53 @@ class Pat : public Command {
          * @param username: The users name.
          * @param serverID: The ID of the server the user is on.
          */
-        static std::string findUserID(std::string, std::string serverID);
+        bool findUserID(std::string, std::string serverID, std::vector<std::pair<std::string, std::string>>*);
+
+        /**
+         * Extract a command from a string.
+         * (Possible commands: gcount, rcount)
+         * @param param: The string that may hold the command.
+         * @return rcount or gcount if a command was found, if not an empty string
+         */
+        std::string getCommand(std::string);
+
+        /**
+         * Get the users mentioned in a string.
+         * If no user was found, users will only receive {"pod", "pod"} as a entry.
+         * @param param: The input string
+         * @param serverID: The Discord server ID of the server the user(s) should be on.
+         * @param users: A vector of pairs with the name of the user in the first entry and thd ID of the user in the second entry.
+         *               Will be filled by this method.
+         */
+        void getUsers(std::string, std::string, std::vector<std::pair<std::string, std::string>>*);
+
+        /**
+         * Pats users! 
+         * Will return a string with a message for the discord chat.
+         * @param user: The user who is patting people
+         * @param users: The users who will be patted, in a vector of <string USERNAME, string USER_ID> pairs.
+         * @return: A string with a message informing the user who was patted, and who was not patted (or other events).
+         */
+        std::string executePat(std::string, std::vector<std::pair<std::string, std::string>>*);
+
+        /**
+         * Executes a command (rcount, gcount).
+         * Is anyone even reading these comments? 
+         * @param command: The command. Duh.
+         * @param user: The needed by the command. May be empty.
+         * @return: The output of the command.
+         */
+        std::string executeCommand(std::string, std::pair<std::string, std::string>);
+        /**
+         * Since we don't want the cache to be refreshed too often,
+         * only refresh it when this variable is true.
+         */
+        static bool mayRefreshCache;
+        /**
+         * A map structure with server IDs as the keys and jsons with server members 
+         * and their corresponding IDs,Names, Nicks as values.
+         */
+        static std::map<std::string, nlohmann::json> membersOnServer;
 };
 
 

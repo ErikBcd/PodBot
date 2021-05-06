@@ -39,8 +39,10 @@ public:
 		try {
 			if (stringBeginsWith(message.content, indicator) || message.content[0] == SHORT_INDICATOR) {
 				SleepyDiscord::SendMessageParams params = executeCommand(&message);
-				params.channelID = message.channelID;
-				sendMessage(params);
+				if (!params.content.empty() || !params.embed.empty()) {
+					params.channelID = message.channelID;
+					sendMessage(params);
+				}
 			} else if (message.startsWith("Pod!") || message.startsWith("pod!")) {
 				sendMessage(message.channelID, message.author.username +"!");
 			} else if (message.isMentioned("702297628318236674")) {
@@ -103,9 +105,8 @@ private:
 
 		if (commands.find(command) != commands.end()) {
 			return commands[command]->execute(param, message);
-		} else {
-			return commands["help"]->execute(command, message);
 		}
+		return SleepyDiscord::SendMessageParams();
 	} 
 };
 

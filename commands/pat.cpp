@@ -135,7 +135,7 @@ std::string Pat::executePat(std::string user, std::vector<std::pair<std::string,
         if (pattedUserSet.find(u.second) == pattedUserSet.end()) {
             if (u.first == "pod" || u.second == "702297628318236674") {
                 pat(user, "pod");
-                output += "Thank you <:podYay:739476531449036941>\n";
+                output += "Thank you <a:podPat:762750253086015579>\n";
                 pattedUserSet.insert("702297628318236674");
                 pattedUserSet.insert("pod");
                 pattedUserSet.insert("Pod");

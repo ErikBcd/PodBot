@@ -1,33 +1,28 @@
-#include <iostream>
-#include "sleepy_discord/sleepy_discord.h"
+#include "Module.hh"
+#include "../Exceptions.cpp"
 
-#include "include/command.h"
-#include "include/exceptions.h"
+Module::Module() {}
 
-
-
-Command::Command() {}
-SleepyDiscord::SendMessageParams Command::execute(std::string param, SleepyDiscord::Message*) 
-{
+SleepyDiscord::SendMessageParams Module::execute(std::string param, SleepyDiscord::Message*) {
     SleepyDiscord::SendMessageParams params;
-    params.content = "The specified command was not found!";
+    params.content = "Sorry, but this command was not found. Try `pod help` once I implemented it!\n";
     return params;
 }
 
-std::string Command::description() 
+std::string Module::description() 
 {
     return "This is a generic command description. Not that useful, eh?\nTell Estugon he missed a command description if you see him, okay?";
 }
 
-std::string Command::longDescription() {
+std::string Module::longDescription() {
     return "This is a generic command description, but loooooong. If you see this message, Estugon forgot to implement the long description for one (or more..) commands.\nHow rude of him, isn't it? uwu";
 }
 
-bool Command::isSecret() {
+bool Module::isSecret() {
     return false;
 }
 
-std::vector<std::string> Command::parameterize(std::string rawParams) {
+std::vector<std::string> Module::parameterize(std::string rawParams) {
     if (rawParams.empty()) {
         throw IllegalArgumentException("No arguments given when they were needed!");
     }
@@ -68,3 +63,4 @@ std::vector<std::string> Command::parameterize(std::string rawParams) {
 
     return params;
 }
+

@@ -5,3 +5,4 @@ out
 setEnv.sh
 launch.sh
 podTester.cpp
+*.sh

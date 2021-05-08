@@ -1,24 +1,10 @@
-cmake_minimum_required(VERSION 3.0)
-project(Pod VERSION 0.2.0)
+#CMakeLists.txt
+cmake_minimum_required (VERSION 3.6)
+project(PodBot)
 
-include(CTest)
-enable_testing()
+add_executable(Pod main.cpp base.cpp)
 
+add_subdirectory(common)
 
-
-file(GLOB SOURCES
-    commands/*.cpp
-)
-
-
-add_executable(Pod 
-    main.cpp
-    podSources.cpp
-    ${SOURCES}
-)
-
-add_subdirectory(sleepy-discord)
-target_link_libraries(Pod sleepy-discord)
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
+add_subdirectory(deps/sleepy-discord)
+target_link_libraries(Pod sleepy-discord Modules)

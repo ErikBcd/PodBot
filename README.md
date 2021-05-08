@@ -1,15 +1,13 @@
 ## PodBot ##
 
-Just my little Discord Bot Project.
+New version of my smol bot.
 
-It's my first bigger coding project (and my first C++ project, too), so don't expect to find good code.
+Build:
+1. Create build directory
+    `mkdir build`
+2. Configure cmake (I use Ninja for compiling)
+    `cmake -G "Ninja" ..`
+3. Build
+    `ninja`
 
-To get this to work, you need to get the Sleepy-Discord Library, too. It's in the submodules, so it should be automatically cloned? I guess? I am new to Github.
-Edit: No it's not automatic. 
-
-
-To set the needed API keys (Discord and Last.fm) you need to provide them in the enviroment variables DISCORD_KEY and LASTFM_KEY.
-glhf
-
-
-TODO: Write a better ReadMe. 
+To launch, set a enviroment variable called `DISCORD_KEY` which contains your Discord API key, and then launch `Pod` in the build directory.

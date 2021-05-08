@@ -20,6 +20,10 @@ class Pod : public SleepyDiscord::DiscordClient {
                 std::cout << "hello from " << message.author.username << std::endl;
                 sendMessage(message.channelID, "Hello " + message.author.username);
             } else if (message.startsWith("pod dogeticker")) {
+                if (message.author.ID.string() != "157491513054461953") {
+                    sendMessage(message.channelID, "You are not allowed to do that, wtf");
+                    return;
+                }
                 std::cout << "dogeticker from " << message.author.username << std::endl;
                 SleepyDiscord::SendMessageParams p = modules["doge"]->execute("switch", &message);
                 p.channelID = message.channelID;
@@ -31,10 +35,19 @@ class Pod : public SleepyDiscord::DiscordClient {
                 p.channelID = message.channelID;
                 sendMessage(p);
 
-            } else if (message.startsWith("pod ")) {
-                std::cout << "pod from " << message.author.username << std::endl;
-                sendMessage(message.channelID, "Hey " + message.author.username + ", I am quite busy right now, so I can't follow your order, sorry.");
-            }
+            } else if (message.startsWith("pod stop") && message.author.ID.string() == "157491513054461953") {
+                sendMessage(message.channelID, "Shutting down!");
+                this->quit();
+            } else if (message.startsWith("Pod!") || message.startsWith("pod!")) {
+				sendMessage(message.channelID, message.author.username +"!");
+			} else if (message.isMentioned("702297628318236674")) {
+				sendMessage(message.channelID, "<:podPing:739476530727747656>");
+			} else if (message.startsWith("PodUpdate") && message.author.ID == "157491513054461953") {
+				std::string msg = message.content;
+				msg = msg.substr(10, msg.size() - 10);
+				updateStatus(msg);
+				addReaction(message.channelID, message.ID, ":podYay:739476531449036941");
+			}
 
         }
 
